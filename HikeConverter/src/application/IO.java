@@ -9,7 +9,7 @@ import java.util.Scanner;
 
 public class IO {
 
-	public static void writeData(double miles, int minutes, int hours, int days, int months, int years){
+	public static  void writeData(double miles, int minutes, int hours, int days, int months, int years){
 		   try{
 		
 		       FileWriter fw = new FileWriter ("hikingData.txt");
@@ -26,12 +26,18 @@ public class IO {
 		   } catch (IOException e){
 		
 			   new Alerts("Error", "There was an error writing the data to file!");
+			   System.out.println("in alert");
 		   
 		   }	
+		   
+		   System.out.println(miles);
+		   System.out.println(minutes);
+		   System.out.println(hours);
+
 		
 			}
 	
-	 public static void readData(double miles, int min, int hour, int day, int month, int year){
+	 public static  void readData(){
 
 		   try{
 	            FileReader fr = new FileReader("hikingData.txt");
@@ -41,12 +47,12 @@ public class IO {
 
 	            while(scan.hasNext()){
 
-	            	miles = scan.nextDouble();
-	            	min = scan.nextInt();
-	            	hour = scan.nextInt();
-	            	day = scan.nextInt();
-	            	month = scan.nextInt();
-	            	year = scan.nextInt();
+	            	Main.totalMilesHiked = scan.nextDouble();
+	            	Main.totalMinutesHiked = scan.nextInt();
+	            	Main.totalHoursHiked = scan.nextInt();
+	            	Main.totalDaysHiked = scan.nextInt();
+	            	Main.totalMonthsHiked = scan.nextInt();
+	            	Main.totalYearsHiked = scan.nextInt();
 
 	            }
 	            
@@ -60,7 +66,7 @@ public class IO {
 				   new Alerts("Error", "There was an error reading the data from file!");
 	        }
 		 
-	   	//	System.out.println("readData\n" + "Total Miles"  + totalMilesHiked + "\ntotal minutes " + totalMinutesHiked + "\ntotal hours " + totalHoursHiked + "\n");
+	   		System.out.println("readData\n" + "Total Miles"  + Main.totalMilesHiked + "\ntotal minutes " + Main.totalMinutesHiked + "\ntotal hours " + Main.totalHoursHiked + "\n");
 
 	 }
 }
