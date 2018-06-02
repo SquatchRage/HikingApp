@@ -26,7 +26,6 @@ public class IO {
 		   } catch (IOException e){
 		
 			   new Alerts("Error", "There was an error writing the data to file!");
-			   System.out.println("in alert");
 		   
 		   }	
 		   
@@ -66,7 +65,7 @@ public class IO {
 				   new Alerts("Error", "There was an error reading the data from file!");
 	        }
 		 
-	   		System.out.println("readData\n" + "Total Miles"  + Main.totalMilesHiked + "\ntotal minutes " + Main.totalMinutesHiked + "\ntotal hours " + Main.totalHoursHiked + "\n");
+	   		//System.out.println("readData\n" + "Total Miles"  + Main.totalMilesHiked + "\ntotal minutes " + Main.totalMinutesHiked + "\ntotal hours " + Main.totalHoursHiked + "\n");
 
 	 }
 }

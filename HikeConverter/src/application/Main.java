@@ -48,7 +48,7 @@ public class Main extends Application{
 	private Button addButton;
 	private HBox topBox, middleBox, bottomBox;
 	private VBox master;
-	private Label calculatedHours, calculatedMinutes, calculatedMiles, calculatedDays, calculatedMonths, calculatedYears;
+	private Label calculatedHours, calculatedMinutes, calculatedMiles, calculatedDays, calculatedMonths, calculatedYears, direction;
 	private Label milesLabel, yearLabel, monthLabel, dayLabel, hourLabel, minuteLabel;
 	private Separator separator;
 	private  String getMiles;
@@ -59,12 +59,9 @@ public class Main extends Application{
 	 static int totalDaysHiked;
 	 static int totalMonthsHiked;
 	 static int totalYearsHiked;
-	private int minutesHiked, hoursHiked, daysHiked, monthsHiked, yearshiked;
-	private double milesHiked = 0;
-	  static double totalMilesHiked;
-	int minuteMod, hourMod, dayMod, monthMod, yearMod;
-	int remainder = 0, mod = 60;
-	Conversion con = new Conversion();
+	 private int minutesHiked, hoursHiked, daysHiked, monthsHiked, yearshiked;
+	 private double milesHiked = 0;
+	 static double totalMilesHiked;
 	
 	public static void main(String[] args) {
 		launch(args);
@@ -161,22 +158,58 @@ public class Main extends Application{
 
                getMinutes = minutesInput.getText().trim();
                minutesHiked = Integer.parseInt(getMinutes);
+               totalMinutesHiked = totalMinutesHiked + minutesHiked;
                
                getHours = hoursInput.getText().trim();
                hoursHiked = Integer.parseInt(getHours);
+               totalHoursHiked = totalHoursHiked + hoursHiked;
                
                //-- This if statement checks if the hours/minutes fields have input.  if not a method is called to populate options. 
                if(hoursHiked  <= 0 && minutesHiked <= 0) {
             	   
             	 nullFields();
-                 IO.writeData( totalMilesHiked, totalMinutesHiked, totalHoursHiked, totalDaysHiked, totalMonthsHiked, totalYearsHiked);
+               //  IO.writeData( totalMilesHiked, totalMinutesHiked, totalHoursHiked, totalDaysHiked, totalMonthsHiked, totalYearsHiked);
 
                }
-               
-               con.convertMinutes(minutesHiked, 60, remainder);
-               con.convertHours(hoursHiked, 24, remainder);
-               con.convertDays(daysHiked, 31, remainder);
-               con.convertMonths(monthsHiked, 12, remainder);
+               // if total minutes are higher than given mod, add to hours, loop until minutes are lower than mod. 
+              int mod = 60;
+              if( totalMinutesHiked >= mod) {
+
+             	   while(totalMinutesHiked >= mod) {
+             		   
+             		 totalMinutesHiked =  totalMinutesHiked - mod;
+             		 totalHoursHiked++;}
+              }	   
+               // if total hours are higher than given mod, add to days, loop until hours are lower than mod. 	   									     }
+               mod = 24;
+               if( totalHoursHiked >= mod) {
+
+            	   while(totalHoursHiked >= mod) {
+            		   
+            		 totalHoursHiked =  totalHoursHiked - mod;
+            		 totalDaysHiked++;}
+            		   
+               }
+               // if total days are higher than given mod, add to months, loop until days are lower than mod. 
+               mod = 31;
+               if( totalDaysHiked >= mod) {
+
+            	   while(totalDaysHiked >= mod) {
+            		   
+            		   totalDaysHiked =  totalDaysHiked - mod;
+            		   totalMonthsHiked++;}
+               }
+               // if total months are higher than given mod, add to years, loop until months are lower than mod. 
+               mod = 12;
+               if( totalMonthsHiked >= mod) {
+
+                   while(totalMonthsHiked >= mod) {
+                		   
+                	   totalMonthsHiked =  totalMonthsHiked - mod;
+                		totalYearsHiked++;}
+                   }
+
+        
                
         
           	   // clearing textfields after button click
@@ -190,6 +223,7 @@ public class Main extends Application{
            	IO.writeData( totalMilesHiked, totalMinutesHiked, totalHoursHiked, totalDaysHiked, totalMonthsHiked, totalYearsHiked);
     	    IO.readData();
            	displayStats();
+               
 
             }
         });
@@ -204,10 +238,12 @@ public class Main extends Application{
 	
 	}
 	
+	
+	
 
 	 public void displayStats() {
 
-		    calculatedMiles.setText(Double.toString(totalMilesHiked));  System.out.println("miles inside display" + totalMilesHiked);       	
+		    calculatedMiles.setText(Double.toString(totalMilesHiked)); 
            	calculatedMinutes.setText(Integer.toString(totalMinutesHiked));
            	calculatedHours.setText(Integer.toString(totalHoursHiked));
            	calculatedDays.setText(Integer.toString(totalDaysHiked));
@@ -216,6 +252,7 @@ public class Main extends Application{
 
 	 }
 	 
+
 
  public void nullFields() {
 		 
@@ -241,26 +278,24 @@ public class Main extends Application{
 			if (result.isPresent()){
 				
 			    speed = Double.parseDouble(result.get()); // -- get selected input and convert to double
-			    System.out.println("speed " + speed + "\nmilesHiked " + milesHiked);
+			 //   System.out.println("speed " + speed + "\nmilesHiked " + milesHiked);
 			    time =  milesHiked / speed; // -- time  = distance Hiked / average speed of hike * 10 % for elevation gain/breaks
-			    System.out.println("time " + time);
-			    con.convertHours((int)time, 24, remainder);
+			  //  System.out.println("time " + time);
 
 			    if(time >= 1) {
-			    
-			    totalHoursHiked = (int) (totalHoursHiked + time / 1); // Adds averaged hour(s) to totalHikedHours; Uses a division by 1 to get rid of remainder on hours
-			    System.out.println("im totahours" + totalHoursHiked);
-			    System.out.println("im time before time mod" + time);
+
+			 //   System.out.println("im totahours" + totalHoursHiked);
+			//    System.out.println("im time before time mod" + time);
 			    }
 			    
 			    else {
-			    System.out.println("\nbefore " + time);
+			 //   System.out.println("\nbefore " + time);
 			    time = time * 60; // -- this gives us the representation of minutes (Ex: if .25 is left over, it converts it to 15 )
 			    
-			    con.convertHours((int)time, 60, remainder);
+			    //con.convertHours((int)time, 60, remainder);
 
 			    totalMinutesHiked = (int) (totalMinutesHiked + time); 
-			    System.out.println("after: " +time);  ////////////////// CHECK FOR ZERO. THIS IS WHAT IS CAUSING THE NANS
+			  //  System.out.println("after: " +time);  ////////////////// CHECK FOR ZERO. THIS IS WHAT IS CAUSING THE NANS
 			    	}
 
 				}
