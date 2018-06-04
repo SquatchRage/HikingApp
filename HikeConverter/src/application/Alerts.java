@@ -38,7 +38,7 @@ public class Alerts {
 		b.setOnAction(e -> window.close());
 		
 		VBox layout = new VBox(10);  //Vertical box layout with seperation of 10 pixels
-		layout.setStyle("-fx-background-color: CRIMSON");
+		//layout.setStyle("-fx-background-color: CRIMSON");
 		layout.getChildren().addAll(label, b); // adds objects created to the layout
 		layout.setAlignment(Pos.CENTER); 		//sets alignment of everything to CENTER
 		

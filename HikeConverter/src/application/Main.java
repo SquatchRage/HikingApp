@@ -65,6 +65,8 @@ public class Main extends Application{
 	private int minutesHiked, hoursHiked;
 	private double milesHiked = 0;
 	static double totalMilesHiked;
+	String decimalPattern = "\\d{0,3}([\\.]\\d{0,1})?";
+	String integerPattern = "\\d*";
 	
 	public static void main(String[] args) {
 		launch(args);
@@ -81,7 +83,7 @@ public class Main extends Application{
 		milesInput = new TextField();
 		milesInput.setAlignment(Pos.CENTER);
 		milesInput.setPromptText("Miles Hiked");
-		inputCheck(milesInput); // limits input to number/decimals
+		inputCheck(milesInput, decimalPattern); // limits input to number/decimals
 		
 		Tooltip tp = new Tooltip();
 		tp.setText("Insert your miles hiked.");
@@ -90,7 +92,7 @@ public class Main extends Application{
 		hoursInput = new TextField();
 		hoursInput.setAlignment(Pos.CENTER);
 		hoursInput.setPromptText("Hours Hiked");
-		inputCheck(hoursInput);// limits input to number/decimals
+		inputCheck(hoursInput, integerPattern);// limits input to number
 		
 		Tooltip tp1 = new Tooltip();
 		tp1.setText("Insert your hours hiked.\nIf they are unknown insert 0.");
@@ -99,7 +101,7 @@ public class Main extends Application{
 		minutesInput = new TextField();
 		minutesInput.setAlignment(Pos.CENTER);
 		minutesInput.setPromptText("Minutes Hiked");
-		inputCheck(minutesInput);// limits input to number/decimals
+		inputCheck(minutesInput, integerPattern);// limits input to number
 		
 		Tooltip tp2 = new Tooltip();
 		tp2.setText("Insert your minutes hiked.\nIf they are uknown enter 0"  );
@@ -267,19 +269,21 @@ public class Main extends Application{
 	 }
 
 	 //-- Only allows user to enter a number or decimal into input
-	 public void inputCheck(TextField tf) {
+	 //-- If the new value doesnt match the regex, then set the inputfield to blank
+	 public void inputCheck(TextField tf, String pattern) {
 
 		tf.textProperty().addListener(new ChangeListener<String>() {
 			    @Override
 			    public void changed(ObservableValue<? extends String> observable, String oldValue, 
 			        String newValue) {
-			        if (!newValue.matches("\\d\\.\\d")) {
-			            tf.setText(newValue.replaceAll("[^\\d\\.\\d]", ""));
+			        if (!newValue.matches(pattern)) {
+			            tf.setText(oldValue);
 			        }
 			    }
 
 			}); 
 	 }	 
+	 	 
 }//EOC
 
 
