@@ -19,6 +19,8 @@ import javax.swing.event.DocumentListener;
 
 import javafx.application.Application;
 import javafx.beans.binding.Bindings;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
@@ -34,6 +36,7 @@ import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -46,22 +49,24 @@ public class Main extends Application{
 	private Scene scene;
 	private TextField milesInput, hoursInput, minutesInput;
 	private Button addButton;
-	private HBox topBox, middleBox, bottomBox;
+	private HBox topBox, middleBox, bottomBox, labelPanel;
 	private VBox master;
-	private Label calculatedHours, calculatedMinutes, calculatedMiles, calculatedDays, calculatedMonths, calculatedYears, direction;
+	private Label calculatedHours, calculatedMinutes, calculatedMiles, calculatedDays, calculatedMonths, calculatedYears, infoLabel;
 	private Label milesLabel, yearLabel, monthLabel, dayLabel, hourLabel, minuteLabel;
 	private Separator separator;
 	private  String getMiles;
 	private  String getHours;
 	private  String getMinutes;
-	 static int totalMinutesHiked;
-	 static int totalHoursHiked;
-	 static int totalDaysHiked;
-	 static int totalMonthsHiked;
-	 static int totalYearsHiked;
-	 private int minutesHiked, hoursHiked, daysHiked, monthsHiked, yearshiked;
-	 private double milesHiked = 0;
-	 static double totalMilesHiked;
+	static int totalMinutesHiked;
+	static int totalHoursHiked;
+	static int totalDaysHiked;
+	static int totalMonthsHiked;
+	static int totalYearsHiked;
+	private int minutesHiked, hoursHiked;
+	private double milesHiked = 0;
+	static double totalMilesHiked;
+	String decimalPattern = "\\d{0,3}([\\.]\\d{0,1})?";
+	String integerPattern = "\\d*";
 	
 	public static void main(String[] args) {
 		launch(args);
@@ -78,18 +83,34 @@ public class Main extends Application{
 		milesInput = new TextField();
 		milesInput.setAlignment(Pos.CENTER);
 		milesInput.setPromptText("Miles Hiked");
+		inputCheck(milesInput, decimalPattern); // limits input to number/decimals
+		
+		Tooltip tp = new Tooltip();
+		tp.setText("Insert your miles hiked.");
+		milesInput.setTooltip(tp);
 		
 		hoursInput = new TextField();
 		hoursInput.setAlignment(Pos.CENTER);
 		hoursInput.setPromptText("Hours Hiked");
+		inputCheck(hoursInput, integerPattern);// limits input to number
+		
+		Tooltip tp1 = new Tooltip();
+		tp1.setText("Insert your hours hiked.\nIf they are unknown insert 0.");
+		hoursInput.setTooltip(tp1);
 		
 		minutesInput = new TextField();
 		minutesInput.setAlignment(Pos.CENTER);
 		minutesInput.setPromptText("Minutes Hiked");
+		inputCheck(minutesInput, integerPattern);// limits input to number
 		
+		Tooltip tp2 = new Tooltip();
+		tp2.setText("Insert your minutes hiked.\nIf they are uknown enter 0"  );
+		minutesInput.setTooltip(tp2);
+
+
 		addButton = new Button("Add");
-		addButton.setDisable(true);
-		 addButton.disableProperty().bind(
+		//disables button until all fields have input
+		addButton.disableProperty().bind(
          	    Bindings.isEmpty(milesInput.textProperty())
          	    .or(Bindings.isEmpty(hoursInput.textProperty()))
          	    .or(Bindings.isEmpty(minutesInput.textProperty()))
@@ -104,7 +125,9 @@ public class Main extends Application{
 		
 		separator = new Separator();
 		separator.setMaxWidth(800);
-		
+		infoLabel = new Label(" ** If you do not know the the hours/minutes insert miles hiked and click 'Add'");
+		labelPanel = new HBox();
+		labelPanel.getChildren().add(infoLabel);
 		
 //-- MID HBOX AREA
 		
@@ -116,14 +139,12 @@ public class Main extends Application{
 		calculatedMinutes = new Label("00");
 
 		middleBox = new HBox();
-		//middleBox.setStyle("-fx-background-color: aliceblue");
+		//middleBox.setStyle("-fx-background-color: white");
 		middleBox.setAlignment(Pos.CENTER);
 		middleBox.setPadding(new Insets(90,10,10,10));
 		middleBox.setSpacing(100);
 		middleBox.getChildren().addAll(calculatedMiles, calculatedYears, calculatedMonths, calculatedDays, calculatedHours, calculatedMinutes);
-		
-		
-		
+
 //-- BOTTOM HBOX AREA		
 		
 		milesLabel = new Label("Miles");
@@ -149,26 +170,25 @@ public class Main extends Application{
             @Override
             public void handle(ActionEvent event) {
 
-            	
                	//Gets input from txtfields and pulls it into variables and adds them up.     
-            	
+            
                getMiles = milesInput.getText().trim();
+               getMinutes = minutesInput.getText().trim();
+               getHours = hoursInput.getText().trim();
+       
                milesHiked = Double.parseDouble(getMiles);   
                totalMilesHiked = totalMilesHiked + milesHiked;
-
-               getMinutes = minutesInput.getText().trim();
+       
                minutesHiked = Integer.parseInt(getMinutes);
                totalMinutesHiked = totalMinutesHiked + minutesHiked;
                
-               getHours = hoursInput.getText().trim();
                hoursHiked = Integer.parseInt(getHours);
                totalHoursHiked = totalHoursHiked + hoursHiked;
                
                //-- This if statement checks if the hours/minutes fields have input.  if not a method is called to populate options. 
                if(hoursHiked  <= 0 && minutesHiked <= 0) {
-            	   
-            	 nullFields();
-               //  IO.writeData( totalMilesHiked, totalMinutesHiked, totalHoursHiked, totalDaysHiked, totalMonthsHiked, totalYearsHiked);
+            	               	 
+            	 Alerts.nullFields(milesHiked);
 
                }
                // if total minutes are higher than given mod, add to hours, loop until minutes are lower than mod. 
@@ -180,7 +200,7 @@ public class Main extends Application{
              		 totalMinutesHiked =  totalMinutesHiked - mod;
              		 totalHoursHiked++;}
               }	   
-               // if total hours are higher than given mod, add to days, loop until hours are lower than mod. 	   									     }
+               // if total hours are higher than given mod, add to days, loop until hours are lower than mod. 	   									     
                mod = 24;
                if( totalHoursHiked >= mod) {
 
@@ -209,8 +229,7 @@ public class Main extends Application{
                 		totalYearsHiked++;}
                    }
 
-        
-               
+
         
           	   // clearing textfields after button click
           	   milesInput.clear();
@@ -230,16 +249,13 @@ public class Main extends Application{
 
 		master = new VBox();
 		master.setStyle("-fx-background-color: slategrey");
-		master.getChildren().addAll(topBox, separator,  middleBox, bottomBox);
+		master.getChildren().addAll(topBox, separator, labelPanel,  middleBox, bottomBox);
 		scene = new Scene(master, 800,500);
 		window.setScene(scene);
-		window.setTitle("Hike Data");
+		window.setTitle("Hike Calculator");
 		window.show();
 	
 	}
-	
-	
-	
 
 	 public void displayStats() {
 
@@ -251,60 +267,23 @@ public class Main extends Application{
            	calculatedYears.setText(Integer.toString(totalYearsHiked));
 
 	 }
-	 
 
+	 //-- Only allows user to enter a number or decimal into input
+	 //-- If the new value doesnt match the regex, then set the inputfield to blank
+	 public void inputCheck(TextField tf, String pattern) {
 
- public void nullFields() {
-		 
-		 double time, speed;
-		 
-			List<String> choices = new ArrayList<>();
-			choices.add("0.5");
-			choices.add("1.0");
-			choices.add("1.5");
-			choices.add("2.0");
-			choices.add("2.5");
-			choices.add("3.0");
-			choices.add("3.5");
-
-			ChoiceDialog<String> dialog = new ChoiceDialog<>("0.5", choices);
-			dialog.setTitle("Hiked Miles Per Hour");
-			dialog.setHeaderText("			  IF TIME HIKED IS UNKNOWN"
-					+ "\n Choose an average Hiked Miles Per Hour (HMPH) below.");
-			dialog.setContentText("Choose your HMPH:");
-
-			// Traditional way to get the response value.
-			Optional<String> result = dialog.showAndWait();
-			if (result.isPresent()){
-				
-			    speed = Double.parseDouble(result.get()); // -- get selected input and convert to double
-			 //   System.out.println("speed " + speed + "\nmilesHiked " + milesHiked);
-			    time =  milesHiked / speed; // -- time  = distance Hiked / average speed of hike * 10 % for elevation gain/breaks
-			  //  System.out.println("time " + time);
-
-			    if(time >= 1) {
-
-			 //   System.out.println("im totahours" + totalHoursHiked);
-			//    System.out.println("im time before time mod" + time);
+		tf.textProperty().addListener(new ChangeListener<String>() {
+			    @Override
+			    public void changed(ObservableValue<? extends String> observable, String oldValue, 
+			        String newValue) {
+			        if (!newValue.matches(pattern)) {
+			            tf.setText(oldValue);
+			        }
 			    }
-			    
-			    else {
-			 //   System.out.println("\nbefore " + time);
-			    time = time * 60; // -- this gives us the representation of minutes (Ex: if .25 is left over, it converts it to 15 )
-			    
-			    //con.convertHours((int)time, 60, remainder);
 
-			    totalMinutesHiked = (int) (totalMinutesHiked + time); 
-			  //  System.out.println("after: " +time);  ////////////////// CHECK FOR ZERO. THIS IS WHAT IS CAUSING THE NANS
-			    	}
-
-				}
-		   
-			}
-	 
-
-
-		
-	}
+			}); 
+	 }	 
+	 	 
+}//EOC
 
 
